@@ -21,3 +21,4 @@ Learning project: a Data Vault pipeline on dbt and Snowflake. My first goal is u
 - Define how we'll verify a task before starting it, then check it.
 - Flag anything outside `docs/PLAN.md` before starting it, and anything that threatens `docs/BUDGET.md`.
 - Write concise Conventional Commits with no AI attribution or co-author lines.
+- Commit directly to main; don't create branches unless I ask.
