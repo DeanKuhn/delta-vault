@@ -19,3 +19,6 @@ profiles.yml
 
 # local Claude Code settings
 .claude/settings.local.json
+
+# personal docs
+docs/dbt-vault.md
