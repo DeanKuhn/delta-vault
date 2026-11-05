@@ -1,0 +1,21 @@
+# all pycache
+__pycache__/
+*.pyc
+
+# dbt
+dbt/target/
+dbt/dbt_packages/
+dbt/logs/
+dbt/.user.yml
+
+# credentials
+.env
+profiles.yml
+*.p8
+*.pem
+
+# virtual environment
+.venv/
+
+# local Claude Code settings
+.claude/settings.local.json
