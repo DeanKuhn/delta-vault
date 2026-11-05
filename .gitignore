@@ -21,4 +21,4 @@ profiles.yml
 .claude/settings.local.json
 
 # personal docs
-docs/dbt-vault.md
+docs/notes/
