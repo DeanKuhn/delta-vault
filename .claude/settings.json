@@ -1,0 +1,13 @@
+{
+  "permissions": {
+    "ask": [
+      "Bash(git push *)"
+    ],
+    "deny": [
+      "Read(./.env)",
+      "Read(./**/*.p8)",
+      "Read(./**/*.pem)",
+      "Read(./**/profiles.yml)"
+    ]
+  }
+}

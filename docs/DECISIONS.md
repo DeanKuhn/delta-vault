@@ -18,3 +18,6 @@ Vault loads use hand-written SQL and a hash macro, not AutomateDV. Learning come
 
 ## Platform
 Snowflake is widely used in modern data stacks. The trial ends around Nov 19, so the repo documents sample output for when it can no longer run there.
+
+## AI controls
+Claude Code permission rules in `.claude/settings.json` block credential files and require approval for `git push`, because `CLAUDE.md` is guidance the model can decide not to follow. The rules don't stop a script that opens a file, and the source data is synthetic. A solo repo can show these controls but not organizational governance.
