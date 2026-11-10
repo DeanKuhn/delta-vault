@@ -16,6 +16,9 @@ Satellites are the only record of history, and SCD2 is derived from them using w
 ## Vault loading
 Vault loads use hand-written SQL and a hash macro, not AutomateDV. Learning comes first on this project.
 
+## Hashdiff
+Hashdiffs hash only a satellite's descriptive columns, not the business key. Every satellite load compares the incoming row with the latest row for the same hash key, so the business key adds nothing. A load that compares hashdiffs without the hash key would skip changes for any customer whose details match another customer's. 
+
 ## Platform
 Snowflake is widely used in modern data stacks. The trial ends around Nov 19, so the repo documents sample output for when it can no longer run there.
 
