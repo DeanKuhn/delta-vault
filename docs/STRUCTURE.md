@@ -9,7 +9,9 @@ delta-vault/
 ├── docs/
 │   ├── PLAN.md               Definition of finished
 │   ├── STRUCTURE.md          This layout
-│   └── DECISIONS.md          Modeling decisions and reasoning
+│   ├── BUDGET.md             Hours by block of work
+│   ├── DECISIONS.md          Modeling decisions and reasoning
+│   └── notes/                Personal learning notes (gitignored)
 ├── data/                     Source files for each load
 │   ├── batch_1/              Starting state, including unmapped 9001
 │   ├── batch_2/              Rename and plan change
