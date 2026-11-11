@@ -30,3 +30,6 @@ Claude Code permission rules in `.claude/settings.json` block credential files a
 
 ## Satellites per source
 Satellites are per-source to avoid constant insertion and fights between sources that disagree. In a shared satellite, including `record_source` in the hashdiff inserts a row on every load even when nothing changed, and leaving it out makes disagreeing sources insert alternating rows. Satellite-per-source is the common recommendation. The cost is that deciding which source wins moves to the marts.
+
+## Load date
+`load.py` stamps one `_loaded_at` per batch when it lands in `RAW`, and the vault's `load_date` is copied from it. Re-landing a batch keeps its original `_loaded_at`. Satellite loads skip incoming rows whose `load_date` is not newer than the latest stored row for that hash key, so replaying an older batch inserts nothing. Together these make reruns idempotent, because the same batch always writes the same dates. Reading the clock in dbt was rejected because every run attempt would stamp a new date, and a replayed old batch would look newer than the data after it. Batches must load in order, because a late batch is skipped for any key that already has newer rows.
