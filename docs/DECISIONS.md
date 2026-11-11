@@ -2,10 +2,10 @@
 Modeling decisions are provisional until the model is drawn and checked against Data Vault sources.
 
 ## Business key
-`account_number` is the business key, with CRM and billing using different IDs linked by a mapping. This demonstrates real integration, and a business key is more stable than a system ID.
+`account_number` is the business key, and both CRM and billing carry it, though some billing rows arrive without one. It needs no collision code because the business assigns account numbers in one key space. An account number survives a system replacement, while a system ID may not, and the gaps keep real integration in the build.
 
 ## Unmapped customers
-Billing customers without a mapping load under their billing ID, and a same-as link connects them later. This keeps the facts billing sent without blocking the load.
+Billing rows without an account number load under their billing ID with a `BILLING` collision code, and a same-as link connects them once the mapping arrives. This keeps the facts billing sent without blocking the load.
 
 ## Restatement
 Marts show the latest mappings, and the vault records when each mapping arrived. This gives the best current view, and earlier views can be rebuilt.
