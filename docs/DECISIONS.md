@@ -39,3 +39,6 @@ Each source batch holds at most *one row per customer*, showing that customer's 
 
 ## SCD2 valid_to convention
 The latest `valid_to` column is `9999-12-31`, filled with `coalesce` when the dimension is built, and `is_current` is built from it. Null `valid_to` silently drops the current version's rows from filters and joins without analysts knowing. Rejected: *null* `valid_to`. Seems cleaner for current lookups, but fails filters and joins. Cons of decision: `9999-12-31` is made up and may conflict with real expiration dates that may not exist in the source data. 
+
+## Which source wins
+Survivorship per column (name from CRM, city and plan from BILLING), and a PIT table. Rejected options: (1) All from one source (say, CRM): limiting. (2) Only the most recent: relies on the business to keep their records up to date, falls apart with late additions. (3) Save all individually: adds complexity in querying and merging.

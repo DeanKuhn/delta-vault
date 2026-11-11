@@ -6,6 +6,7 @@ Stop rule: stop building on Nov 14, or three days before the panel if that comes
 ## Architecture
 - [ ] Python ingestion is simple and uses a generator for paging, a context manager for connections, and a timing decorator.
 - [ ] Raw vault has 2-3 hubs, 1-2 links, a same-as link, and 3-4 satellites.
+- [ ] A PIT table merges the CRM and billing satellite timelines for the SCD2 customer dimension.
 - [ ] Marts have one fact table and two dimension tables, including an SCD2 dimension.
 - [ ] All schemas are built on Snowflake.
 - [ ] `DECISIONS.md` explains each modeling decision.
@@ -38,6 +39,6 @@ Stop rule: stop building on Nov 14, or three days before the panel if that comes
 ## Deliberately skipping
 - **Sources:** API server, event feed / Kafka, contacts and opportunities, fuzzy customer matching.
 - **Stack:** Portable, Sigma, Salesforce data shares.
-- **Modeling:** AutomateDV. PIT and bridge tables, unless a mart needs them.
+- **Modeling:** AutomateDV. Bridge tables, unless a mart needs them.
 - **Engineering:** Orchestration, CI, multiple environments.
 - **Optional:** dbt snapshot, only if time is left.
