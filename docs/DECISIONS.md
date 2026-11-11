@@ -27,3 +27,6 @@ Snowflake is widely used in modern data stacks. The trial ends around Nov 19, so
 
 ## AI controls
 Claude Code permission rules in `.claude/settings.json` block credential files and require approval for `git push`, because `CLAUDE.md` is guidance the model can decide not to follow. The rules don't stop a script that opens a file, and the source data is synthetic. A solo repo can show these controls but not organizational governance.
+
+## Satellite per source or shared satellite
+Satellite will be per-source to avoid constant insertion and fights between sources that may have outdated data. Both including the `record_source` and not including it result in either constantly-inserted data or data that fights each other if it conflicts. Satellite-per-source is the standard to go with.
