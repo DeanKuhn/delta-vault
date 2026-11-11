@@ -1,7 +1,7 @@
 # Definition of Finished
-Target: about one week, from Nov 4 to Nov 11.
+Target: about ten days, from Nov 4 to Nov 14 (extended from Nov 11).
 
-Stop rule: stop building on Nov 11, or three days before the panel if that comes first. Use the remaining time to rehearse.
+Stop rule: stop building on Nov 14, or three days before the panel if that comes first. Use the remaining time to rehearse.
 
 ## Architecture
 - [ ] Python ingestion is simple and uses a generator for paging, a context manager for connections, and a timing decorator.
@@ -15,6 +15,7 @@ Stop rule: stop building on Nov 11, or three days before the panel if that comes
 - [ ] Batches include a rename, a plan change, an unmapped customer, and that customer being mapped later.
 - [ ] A deliberately bad batch fails the data quality gate and loads nothing.
 - [ ] Reloading the same batch adds no vault rows.
+- [ ] Staging has a `unique` test on hash key + load date, so each batch has at most one row per key.
 - [ ] `dbt build` passes on Snowflake.
 - [ ] Customer resolution model maps billing customers to CRM accounts and keeps unmapped customers separate until they are mapped.
 - [ ] Revenue totals match from source to mart, including after a customer is mapped.
