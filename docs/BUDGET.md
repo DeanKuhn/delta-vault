@@ -1,8 +1,8 @@
 # Budget
 
-24 focused hours from Nov 4 to Nov 14. Hours are rough estimates. Rehearsal time is not included.
+24 focused hours from Nov 4 to Nov 19. Hours are rough estimates. Rehearsal time is not included.
 
-Stop building on Nov 14, or three days before the panel (pending date).
+Stop building on Nov 19. The panel is expected around Dec 4.
 
 ## Hours
 Work through these in order.

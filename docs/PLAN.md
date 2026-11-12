@@ -1,7 +1,7 @@
 # Definition of Finished
-Target: about ten days, from Nov 4 to Nov 14 (extended from Nov 11).
+Target: Nov 4 to Nov 19 (extended from Nov 11, then Nov 14).
 
-Stop rule: stop building on Nov 14, or three days before the panel if that comes first. Use the remaining time to rehearse.
+Stop rule: stop building on Nov 19. The panel is expected around Dec 4; use the remaining time to rehearse.
 
 ## Architecture
 - [ ] Python ingestion is simple and uses a generator for paging, a context manager for connections, and a timing decorator.
