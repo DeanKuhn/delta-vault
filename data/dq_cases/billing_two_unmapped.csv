@@ -1,0 +1,4 @@
+billing_id,account_number,customer_name,city,plan
+B-5001,1001,Acme Corporation,Dallas,PRO
+B-9001,,Elm St Yoga,Boston,BASIC
+B-9002,,Fern Florist,Chicago,PRO

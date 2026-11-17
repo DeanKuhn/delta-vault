@@ -1,0 +1,3 @@
+billing_id,account_number,customer_name,city,plan
+B-5001,1001,Acme Corporation,Dallas,PRO
+B-5099, 1001,Acme Corp,Dallas,BASIC
