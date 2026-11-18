@@ -1,3 +1,4 @@
 crm_id,account_number,customer_name,city
 C-001,1001,Acme Corp,Dallas
-C-002,,Birch Logistics,Austin
+C-006,,Fern Florist,Chicago
+C-007,,Grove Hardware,Tulsa
