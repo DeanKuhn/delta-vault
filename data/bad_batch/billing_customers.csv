@@ -1,0 +1,4 @@
+billing_id,account_number,customer_name,city,plan
+B-5901,1901,Falcon Plumbing,Dallas,PRO
+B-5902,1902,Grove Books,Austin,GOLD
+B-5901,1903,Harbor Coffee,Boston,BASIC
