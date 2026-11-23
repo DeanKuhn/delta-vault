@@ -19,6 +19,28 @@ def schema():
     cur.execute("CREATE SCHEMA IF NOT EXISTS DELTA_VAULT.RAW_VAULT")
     cur.execute("CREATE SCHEMA IF NOT EXISTS DELTA_VAULT.BUSINESS_VAULT")
     cur.execute("CREATE SCHEMA IF NOT EXISTS DELTA_VAULT.MARTS")
+    cur.execute("""
+        CREATE TABLE IF NOT EXISTS DELTA_VAULT.RAW.CRM_CUSTOMERS (
+            BATCH_ID INTEGER NOT NULL,
+            _LOADED_AT TIMESTAMP_TZ NOT NULL,
+            CRM_ID VARCHAR NOT NULL,
+            ACCOUNT_NUMBER VARCHAR,
+            CUSTOMER_NAME VARCHAR,
+            CITY VARCHAR
+        )
+    """)
+    cur.execute("""
+        CREATE TABLE IF NOT EXISTS DELTA_VAULT.RAW.BILLING_CUSTOMERS (
+            BATCH_ID INTEGER NOT NULL,
+            _LOADED_AT TIMESTAMP_TZ NOT NULL,
+            BILLING_ID VARCHAR NOT NULL,
+            ACCOUNT_NUMBER VARCHAR,
+            CUSTOMER_NAME VARCHAR,
+            CITY VARCHAR,
+            PLAN VARCHAR
+        )
+    """)
+
     conn.close()
 
 
