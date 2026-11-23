@@ -24,5 +24,6 @@ def get_connection(
         schema=schema,
         role="SYSADMIN",
         autocommit=False,
+        enable_server_session_keep_alive_auto_detection=False,
     )
     return conn
