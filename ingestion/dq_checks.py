@@ -46,7 +46,7 @@ def check_no_empty(
             problems.append(f"{system}: Empty {name}, row {i}.")
 
 
-def check_crm(rows: list[dict]) -> None:
+def check_crm(rows: list[dict]) -> dict[str, str]:
     system = "CRM"
     check_not_empty(rows, system)
 
@@ -70,9 +70,10 @@ def check_crm(rows: list[dict]) -> None:
             f"{system} batch encountered {len(problems)} {multi}:\n"
             + "\n".join(f"{i}. {p}" for i, p in enumerate(problems, start=1))
         )
+    return keys
 
 
-def check_billing(rows: list[dict]) -> None:
+def check_billing(rows: list[dict]) -> dict[str, str]:
     system = "BILLING"
     check_not_empty(rows, system)
 
@@ -104,3 +105,4 @@ def check_billing(rows: list[dict]) -> None:
             f"{system} batch encountered {len(problems)} {multi}:\n"
             + "\n".join(f"{i}. {p}" for i, p in enumerate(problems, start=1))
         )
+    return keys
