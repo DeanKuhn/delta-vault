@@ -28,7 +28,9 @@ delta-vault/
 │   ├── load.py               Runs paging, DQ checks, and the Snowflake load
 │   └── run_dq_cases.py       Offline check of every DQ case and batch ID rule
 └── dbt/
-    ├── macros/               Hash key and hashdiff macros
+    ├── dbt_project.yml       Project name and per-folder defaults
+    ├── profiles.yml.example  Connection template
+    ├── macros/               Schema name, hash key, and hashdiff macros
     ├── tests/                Reload and revenue reconciliation tests
     └── models/
         ├── staging/          Clean names and types, add hashes
