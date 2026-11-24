@@ -1,0 +1,13 @@
+delta_vault:
+  target: dev
+  outputs:
+    dev:
+      type: snowflake
+      account: "{{ env_var('SNOWFLAKE_ACCOUNT') }}"
+      user: "{{ env_var('SNOWFLAKE_USER') }}"
+      private_key_path: "{{ env_var('HOME') }}/.snowflake/rsa_key.p8"
+      role: SYSADMIN
+      warehouse: DELTA_VAULT_WH
+      database: DELTA_VAULT
+      schema: STAGING
+      threads: 1

@@ -1,0 +1,8 @@
+name: delta_vault
+profile: delta_vault
+
+models:
+  delta_vault:
+    staging:
+      +schema: STAGING
+      +materialized: view
