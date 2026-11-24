@@ -1,7 +1,7 @@
 """Reads one CSV and yields a page of rows at a time. A generator."""
 
 import csv
-from collections.abc import Iterator
+from collections.abc import Iterator, Sequence
 from pathlib import Path
 
 
@@ -18,6 +18,6 @@ def read_pages(path: Path, page_length: int) -> Iterator[list[dict]]:
             yield page
 
 
-if __name__ == "__main__":
-    for page in read_pages(Path("data/batch_1/billing_customers.csv"), 2):
-        print(page)
+def read_headers(path: Path) -> Sequence[str] | None:
+    with open(path, "r", newline="", encoding="utf-8") as f:
+        return csv.DictReader(f).fieldnames

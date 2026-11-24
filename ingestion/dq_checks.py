@@ -1,5 +1,7 @@
 """Checks the whole batch for duplicates and then individual rows."""
 
+from collections.abc import Sequence
+
 from ingestion.exceptions import DataQualityError
 
 CRM_HEADERS = ["CRM_ID", "ACCOUNT_NUMBER", "CUSTOMER_NAME", "CITY"]
@@ -12,11 +14,31 @@ def check_not_empty(rows: list[dict], system: str) -> None:
         raise DataQualityError(f"{system}: Rows are empty.")
 
 
-def check_columns(rows: list[dict], headers: list[str], system: str) -> dict[str, str]:
+def check_row_lengths(rows: list[dict], system: str) -> None:
+    problems = []
+    for i, row in enumerate(rows, start=1):
+        if None in row:
+            problems.append(f"{system}: Too many fields, row {i}.")
+        if None in row.values():
+            problems.append(f"{system}: Too few fields, row {i}.")
+    if problems:
+        raise DataQualityError("\n".join(problems))
+
+
+def check_columns(
+    raw_headers: Sequence[str],
+    headers: list[str],
+    system: str,
+    problems: list,
+) -> dict[str, str]:
     headers = headers.copy()
     keys = {}
-    for key in rows[0]:
+    for key in raw_headers:
         cleaned_key = key.strip().upper()
+        if cleaned_key in keys:
+            problems.append(
+                f"{system}: Duplicate cleaned column detected: {cleaned_key}."
+            )
         if cleaned_key in headers:
             headers.remove(cleaned_key)
             keys[cleaned_key] = key
@@ -46,16 +68,19 @@ def check_no_empty(
             problems.append(f"{system}: Empty {name}, row {i}.")
 
 
-def check_crm(rows: list[dict]) -> dict[str, str]:
+def check_crm(raw_headers: Sequence[str], rows: list[dict]) -> dict[str, str]:
     system = "CRM"
+    problems = []
+
+    # === Check empty & row lengths ===
     check_not_empty(rows, system)
+    check_row_lengths(rows, system)
 
     # === Headers & key creation ===
     headers = CRM_HEADERS
-    keys = check_columns(rows, headers, system)
+    keys = check_columns(raw_headers, headers, system, problems)
 
     # === Duplicate ids ===
-    problems = []
     check_no_duplicates(rows, system, keys, problems, "CRM_ID")
     check_no_duplicates(rows, system, keys, problems, "ACCOUNT_NUMBER")
 
@@ -73,16 +98,19 @@ def check_crm(rows: list[dict]) -> dict[str, str]:
     return keys
 
 
-def check_billing(rows: list[dict]) -> dict[str, str]:
+def check_billing(raw_headers: Sequence[str], rows: list[dict]) -> dict[str, str]:
     system = "BILLING"
+    problems = []
+
+    # === Check empty & row lengths ===
     check_not_empty(rows, system)
+    check_row_lengths(rows, system)
 
     # === Headers & key creation ===
     headers = BILLING_HEADERS
-    keys = check_columns(rows, headers, system)
+    keys = check_columns(raw_headers, headers, system, problems)
 
     # === Duplicate ids ===
-    problems = []
     check_no_duplicates(rows, system, keys, problems, "BILLING_ID")
     check_no_duplicates(rows, system, keys, problems, "ACCOUNT_NUMBER")
 
