@@ -107,3 +107,14 @@ Checks 1-3 run first, in order, and stop on failure. A missing column also stops
 `dbt-core` (dbt v1) will be used for this project instead of v2 (`dbt`, formerly Fusion). *Why?* This project is under time constraints, and v2 would take time to set up and test. v1 is acceptable because the models, Jinja, macros, and tests largely carry over. *Costs?* dbt's recommendation for new projects is v2. 1.13 will be the last minor version of `dbt-core`. The upgrade from v1 to v2 is untested. 
 
 To ease a potential future upgrade, deprecation warnings get fixed, and generic test inputs go under `arguments:`.
+
+## Schema name macro
+The `generate_schema_name` macro builds each model in exactly its `+schema` from `dbt_project.yml`, and fails if that value is missing or blank.
+
+*Why override dbt?* By default, dbt adds the target schema as a prefix, so `raw_vault` models would land in `STAGING_RAW_VAULT` instead of `RAW_VAULT`.
+
+*Why fail?* Without a `+schema`, dbt falls back to the target schema. A forgotten setting would silently build a `raw_vault` model in `STAGING`.
+
+*Rejected:* (1) dbt's default. Its prefix keeps developers and environments apart, which is out of scope here. (2) Using `+schema` without the prefix, but falling back to the target schema when it's missing. It can silently put models in the wrong schema.
+
+*Costs?* Nothing separates development from the final models, so a bad run overwrites them. Two developers sharing this database would overwrite each other. The macro is untested with seeds and snapshots.
