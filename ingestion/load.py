@@ -6,9 +6,10 @@ from collections.abc import Sequence
 from datetime import UTC, datetime
 from pathlib import Path
 
-from ingestion.connection import get_connection
+from ingestion.connection import transaction
 from ingestion.dq_checks import check_billing, check_crm
 from ingestion.source import read_headers, read_pages
+from ingestion.timed import timed
 
 BATCHNAME_CHECK = r"batch_(\d+)"
 
@@ -79,6 +80,7 @@ def insert_rows(
     print(f"Inserted {cur.rowcount} rows into {table}.")
 
 
+@timed
 def load() -> None:
     # === Function arguments ===
     parser = argparse.ArgumentParser(description="Input batch folder location.")
@@ -99,10 +101,9 @@ def load() -> None:
     billing_keys = check_billing(billing_headers, billing_batch)
 
     # === Run deletions and insertions in one transaction ===
-    conn = get_connection(
+    with transaction(        
         warehouse="DELTA_VAULT_WH", database="DELTA_VAULT", schema="RAW"
-    )
-    try:
+    ) as conn:
         cur = conn.cursor()
         loaded_at = get_loaded_at(cur, batch_id)
         delete_rows(cur, "CRM_CUSTOMERS", batch_id)
@@ -111,12 +112,6 @@ def load() -> None:
         insert_rows(
             cur, "BILLING_CUSTOMERS", billing_batch, billing_keys, batch_id, loaded_at
         )
-        conn.commit()
-    except Exception:
-        conn.rollback()
-        raise
-    finally:
-        conn.close()
 
 
 if __name__ == "__main__":
