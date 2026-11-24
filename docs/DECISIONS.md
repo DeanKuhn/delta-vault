@@ -48,7 +48,7 @@ Survivorship per column (name from CRM, city and plan from BILLING), and a PIT t
 **Missing names:** Billing-only keys (like `BILLING||B-88`) have no CRM rows, so the CRM name is null. `dim_customer` uses `coalesce(crm.name, billing.name, 'Unknown')`. Nothing is written to the vault. A null name would show as a blank in reports and drop out of filters like `name <> 'Acme'`. Costs: names aren't all from CRM, and a real customer named "Unknown" would look the same as the placeholder.
 
 ## Ingestion
-DQ checks run on the whole batch before anything is written, so a batch never lands partially and duplicates are checked across every row. On failure, the checks raise `DataQualityError` and nothing is written. On passing, any rows this batch already has in RAW are deleted and the batch is inserted, in one transaction, so a re-landed batch replaces itself instead of doubling, and a failed insert rolls the delete back too. RAW stays faithful: Python does no cleaning, so source data appears exactly as it was sent. Checks compare trimmed, uppercased values without changing what lands.
+DQ checks run on the whole batch before anything is written, so a batch never lands partially and duplicates are checked across every row. On failure, the checks raise `DataQualityError` (a file with no header raises `ValueError`) and nothing is written. On passing, any rows this batch already has in RAW are deleted and the batch is inserted, in one transaction, so a re-landed batch replaces itself instead of doubling, and a failed insert rolls the delete back too. RAW stays faithful: Python does no cleaning, so source data appears exactly as it was sent. Checks compare trimmed, uppercased values without changing what lands.
 
 Either system may send an empty `account_number`. The row then falls back to its system ID with a collision code (`CRM||` or `BILLING||`), and a same-as link joins it to the real customer once a mapping arrives. So `crm_id` and `billing_id` are required, and `account_number` is not.
 
@@ -56,12 +56,49 @@ Rejected: (1) Refusing a batch already in RAW. It's simpler, but a load that suc
 
 Costs: re-landing fixes RAW only. The satellites skip re-landed rows because their `load_date` is not newer, so the vault needs a rebuild. A different file sent under an existing batch ID silently overwrites RAW. A broken extract that drops account numbers loads silently as fallback keys, which are permanent in an insert-only vault. Fallback keys split a customer's satellite history across two hash keys, and nothing stitches them yet.
 
+### Flow
+Run from the project root, with one batch folder: `uv run python -m ingestion.load data/batch_1`. The `load()` function in `load.py` then:
+
+1. **Finds `batch_id` from the folder name.** Names that don't match `batch_<number>` are rejected, except `bad_batch`, which is `-1`. *Why?* Simple and repeatable. *Costs?* A wrongly numbered folder overwrites another batch, `batch_007` is the same as `batch_7`, and `bad_batch` would load as `-1` if it ever passed the checks.
+2. **Reads both files.** Each batch has one `crm_customers.csv` and one `billing_customers.csv`, and a missing or misnamed file raises. `read_all` calls `read_headers` and `read_pages` from `source.py`. The raw headers are read separately because `csv.DictReader` silently keeps only the last value of an exactly duplicated column.
+3. **Checks both files** with `check_crm` and `check_billing`, before connecting to Snowflake. The checks are in the table below.
+4. **Replaces the batch's rows** in both tables, in one transaction.
+
+### Choices in the checks
+**Ragged rows fail, raising early.** *Why?* A missing field becomes `None`, so later checks crash on `.strip()`, and an extra field (such as an unquoted comma) shifts values into the wrong columns. *Costs?* One bad row blocks the batch, and later checks don't run, so their problems go unreported.
+
+**Duplicate required columns fail.** Names are compared after `.strip()` and `.upper()`. *Why?* Choosing one column would be a guess. *Rejected:* passing if the values match, which needs more code and can hide a broken extract. *Costs?* A harmless copy blocks the batch.
+
+**Extra columns are dropped.** *Why?* Only required columns load. *Costs?* New source columns go unnoticed, and RAW is faithful only for the required columns.
+
+### Other choices
+**Custom context manager.** *Why?* Keeps transaction logic out of `load.py`, with a visible commit. *Rejected:* the connector's own context manager, which commits and rolls back the same way. *Costs?* More code for the same behavior.
+
+**`_LOADED_AT` is read only from CRM.** *Why?* Both sources share it, and the checks guarantee CRM rows. *Costs?* Depends on both tables always loading together.
+
+**RAW source columns are VARCHAR.** *Why?* Values land as sent. *Costs?* Staging must do the typing.
+
+**No UNIQUE on RAW.** *Why?* `account_number` can repeat across batches or be empty. *Costs?* Uniqueness rests on the checks and dbt tests.
+
+**Two-row pages, then the whole batch in memory.** *Why?* Demonstrates the paging used with sources like APIs, while the checks need every row. *Costs?* Paging saves no memory here.
+
+**One failure blocks both sources.** *Why?* A half-batch is never loaded. *Costs?* A billing error blocks good CRM data.
+
+**Batch order isn't enforced.** `load.py` loads any batch in any order, so running them in order is up to the operator.
+
+### Checks
+Checks 1-3 run first, in order, and stop on failure. A missing column also stops. Other failures in the same file are collected and raised together.
+
 | # | Check | Result |
 |---|-------|--------|
-| 1 | Expected columns present (runs first, stops if not) | fail |
-| 2 | `crm_id` or `billing_id` empty | fail |
-| 3 | `account_number` empty (either system) | allow (fallback) |
-| 4 | Duplicate keys (trim + upper, skipping empties) | fail |
-| 5 | Stray spaces | clean in staging |
-| 6 | Plan not `BASIC` or `PRO` (trim + upper) | fail |
-| 7 | Zero data rows | fail |
+| 1 | No header line | fail (`ValueError`) |
+| 2 | Zero data rows | fail |
+| 3 | Row has more or fewer fields than the header | fail |
+| 4 | Required column missing | fail |
+| 5 | Required column duplicated (trim + upper) | fail |
+| 6 | `crm_id` or `billing_id` empty | fail |
+| 7 | `account_number` empty (either system) | allow (fallback) |
+| 8 | Duplicate `crm_id`, `billing_id`, or `account_number` (trim + upper, skipping empties) | fail |
+| 9 | Plan not `BASIC` or `PRO` (trim + upper) | fail |
+| 10 | Stray spaces | allow (clean in staging) |
+| 11 | Extra column | allow (dropped) |
