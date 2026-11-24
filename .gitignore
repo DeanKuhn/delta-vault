@@ -20,7 +20,6 @@ profiles.yml
 
 # local Claude Code settings
 .claude/
-!.claude/skills/newchat/SKILL.md
 
 # personal docs
 docs/notes/
