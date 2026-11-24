@@ -102,3 +102,8 @@ Checks 1-3 run first, in order, and stop on failure. A missing column also stops
 | 9 | Plan not `BASIC` or `PRO` (trim + upper) | fail |
 | 10 | Stray spaces | allow (clean in staging) |
 | 11 | Extra column | allow (dropped) |
+
+## dbt version
+`dbt-core` (dbt v1) will be used for this project instead of v2 (`dbt`, formerly Fusion). *Why?* This project is under time constraints, and v2 would take time to set up and test. v1 is acceptable because the models, Jinja, macros, and tests largely carry over. *Costs?* dbt's recommendation for new projects is v2. 1.13 will be the last minor version of `dbt-core`. The upgrade from v1 to v2 is untested. 
+
+To ease a potential future upgrade, deprecation warnings get fixed, and generic test inputs go under `arguments:`.
