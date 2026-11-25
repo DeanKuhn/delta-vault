@@ -136,3 +136,6 @@ Trim all text columns. Uppercase only hash inputs, including `customer_bk`, whic
 
 ## `row_number()` for `customer_hk` insertion
 `row_number()` is used when inserting `customer_hk` into `hub_customer` so that two different record sources don't insert the same hashkey at the same time, if it didn't already exist before. `row_number()` gives a fixed result with the priority explicitly written out. *Rejected:* `min(record_source)`, CRM + missing billing, dropping `record_source`. All of these options either fail to scale with more sources or lose important data used later on. *Cost:* customers arriving from both at once default to CRM always.
+
+## Hash for `link_customer_subscription`
+Business keys joined with `||` are used to create the hash key for the link between customers and subscriptions. *Why:* Recomputable from `customer_bk` and `subscription_bk`. *Costs:* Slight but negligable opportunity for collisions. *Rejected:* hash key made of `customer_hk` and `subscription_hk`; this is a hash of a hash and hard to recompute.

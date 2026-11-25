@@ -10,6 +10,10 @@ models:
         data_tests:
           - unique
           - not_null
+      - name: link_customer_subscription_hk
+        data_tests:
+          - unique
+          - not_null
       - name: plan 
         data_tests:
           - not_null

@@ -34,16 +34,27 @@ hash_text as (
 
 ),
 
+link_hash as (
+
+  select
+    *,
+    concat(customer_bk, '||', subscription_bk) as link_hash_text
+
+  from hash_text
+
+),
+
 final as (
 
   select
     *,
     sha2(customer_bk, 256) as customer_hk,
     sha2(hashdiff_text, 256) as hashdiff,
+    sha2(link_hash_text, 256) as link_customer_subscription_hk,
     sha2(subscription_bk, 256) as subscription_hk,
     sha2(subscription_hashdiff_text, 256) as subscription_hashdiff
 
-  from hash_text
+  from link_hash
 
 )
 
