@@ -5,3 +5,4 @@ models:
       - name: customer_hk
         data_tests:
           - unique
+          - not_null

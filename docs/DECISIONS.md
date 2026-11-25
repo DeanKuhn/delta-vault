@@ -126,7 +126,10 @@ SHA-256 hex for hash keys and hashdiffs. *Why:* no known practical collisions. H
 **Fail when missing.** Batch id is mandatory. *Rejected:* Default to 1 - may appear successful when silently loading the wrong batch. Latest batch - may skip a batch in between. *Cost:* more typing, and specifying a wrong id still runs.
 
 ## Staging cleanup
-Trim all text columns. Uppercase only hash inputs, including `customer_bk`, which is also output. *Why:* cleaned once for everything downstream. *Rejected:* trimming only in hashes - output keeps `' Dallas'`, so `where city = 'Dallas'` misses it. Uppercasing output - original case is not kept and is difficult to be recovered. *Cost:* exact source text is only in RAW, and case variants remain in output.
+Trim all text columns. Uppercase only hash inputs, including `customer_bk`, which is also output. `plan` in billing is the exception: its output is uppercased too, because it has two known values and case carries no meaning. *Why:* cleaned once for everything downstream. *Rejected:* trimming only in hashes - output keeps `' Dallas'`, so `where city = 'Dallas'` misses it. Uppercasing output - original case is not kept and is difficult to be recovered. *Cost:* exact source text is only in RAW, and case variants remain in output.
 
 ## `account_number` as text
 `account_number` is kept as text in staging. *Why:* it's an identifier, not a quantity, and `customer_bk` must be text anyway to hold fallback keys. *Rejected:* integer - `01001` and `1001` would merge, and `try_cast` would silently turn other formats into NULL, so the row would load under a fallback key. *Costs:* `1001` and `01001` are two separate customers. A same-as link can join them, but their history stays split across two hash keys.
+
+## `billing_id` as subscription_bk
+`billing_id` was chosen as subscription's business key. *Why:* it stays the same through plan changes and customer mapping. *Rejected:* `customer_hk` + `plan`, doesn't track history. A new `subscription_id`, would have to rewrite ingestion. *Costs:* one subscription per billing account. System replacement splits history.

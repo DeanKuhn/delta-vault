@@ -24,8 +24,8 @@ hash_text as (
     ) as customer_bk,
     concat(
       coalesce(nullif(upper(customer_name), ''), '^^'), '||',
-        coalesce(nullif(upper(city), ''), '^^'))
-      as hashdiff_text
+        coalesce(nullif(upper(city), ''), '^^')
+    ) as hashdiff_text
 
   from raw
 

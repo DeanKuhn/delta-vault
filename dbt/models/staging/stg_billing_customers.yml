@@ -1,0 +1,18 @@
+version: 2
+models:
+  - name: stg_billing_customers
+    columns:
+      - name: customer_hk
+        data_tests:
+          - unique
+          - not_null
+      - name: subscription_hk
+        data_tests:
+          - unique
+          - not_null
+      - name: plan 
+        data_tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ['BASIC', 'PRO']
