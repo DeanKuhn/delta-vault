@@ -133,3 +133,6 @@ Trim all text columns. Uppercase only hash inputs, including `customer_bk`, whic
 
 ## `billing_id` as subscription_bk
 `billing_id` was chosen as subscription's business key. *Why:* it stays the same through plan changes and customer mapping. *Rejected:* `customer_hk` + `plan`, doesn't track history. A new `subscription_id`, would have to rewrite ingestion. *Costs:* one subscription per billing account. System replacement splits history.
+
+## `row_number()` for `customer_hk` insertion
+`row_number()` is used when inserting `customer_hk` into `hub_customer` so that two different record sources don't insert the same hashkey at the same time, if it didn't already exist before. `row_number()` gives a fixed result with the priority explicitly written out. *Rejected:* `min(record_source)`, CRM + missing billing, dropping `record_source`. All of these options either fail to scale with more sources or lose important data used later on. *Cost:* customers arriving from both at once default to CRM always.
