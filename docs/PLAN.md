@@ -16,7 +16,7 @@ Stop rule: stop building on Thursday, Nov 26. **This date is final and will not 
 - [ ] Batches include a rename, a plan change, an unmapped customer, and that customer being mapped later.
 - [x] A deliberately bad batch fails the data quality gate and loads nothing.
 - [ ] Reloading the same batch adds no vault rows.
-- [ ] Staging has a `unique` test on hash key + load date, so each batch has at most one row per key.
+- [ ] Staging has a `unique` test on hash key, so each batch has at most one row per key.
 - [ ] `dbt build` passes on Snowflake.
 - [ ] Customer resolution model maps CRM and billing customers loaded under fallback IDs to their account numbers and keeps unmapped customers separate until they are mapped.
 - [ ] Revenue totals match from source to mart, including after a customer is mapped.
