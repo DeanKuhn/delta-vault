@@ -6,3 +6,5 @@ models:
     staging:
       +schema: STAGING
       +materialized: view
+    raw_vault:
+      +schema: RAW_VAULT

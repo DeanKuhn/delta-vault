@@ -1,0 +1,8 @@
+version: 2
+models:
+  - name: hub_customer
+    columns:
+      - name: customer_hk
+        data_tests:
+          - not_null
+          - unique
