@@ -1,0 +1,14 @@
+version: 2
+models:
+  - name: sal_customer
+    columns:
+      - name: sal_customer_hk
+        data_tests:
+          - not_null
+          - unique
+      - name: fallback_customer_hk
+        data_tests:
+          - not_null
+      - name: customer_hk
+        data_tests:
+          - not_null
