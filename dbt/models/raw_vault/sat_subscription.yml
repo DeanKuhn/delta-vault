@@ -1,0 +1,7 @@
+version: 2
+models:
+  - name: sat_subscription
+    columns:
+      - name: subscription_hk
+        data_tests:
+          - not_null
