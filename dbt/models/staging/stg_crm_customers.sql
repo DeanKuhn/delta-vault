@@ -23,8 +23,8 @@ hash_text as (
       nullif(upper(account_number), ''), concat(record_source, '||', upper(crm_id))
     ) as customer_bk,
     concat(
-      coalesce(nullif(upper(customer_name)), ''), '^^', '||', 
-        coalesce(nullif(upper(city)), ''), '^^'))
+      coalesce(nullif(upper(customer_name), ''), '^^'), '||',
+        coalesce(nullif(upper(city), ''), '^^'))
       as hashdiff_text
 
   from raw
@@ -35,8 +35,8 @@ final as (
 
   select
     *,
-    {{ hash(customer_bk) }} as customer_hk,
-    {{ hash(hashdiff_text)}} as hashdiff
+    sha2(customer_bk, 256) as customer_hk,
+    sha2(hashdiff_text, 256) as hashdiff
 
   from hash_text
 
