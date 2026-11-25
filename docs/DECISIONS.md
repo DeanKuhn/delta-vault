@@ -132,7 +132,7 @@ Trim all text columns. Uppercase only hash inputs, including `customer_bk`, whic
 `account_number` is kept as text in staging. *Why:* it's an identifier, not a quantity, and `customer_bk` must be text anyway to hold fallback keys. *Rejected:* integer - `01001` and `1001` would merge, and `try_cast` would silently turn other formats into NULL, so the row would load under a fallback key. *Costs:* `1001` and `01001` are two separate customers. A same-as link can join them, but their history stays split across two hash keys.
 
 ## `billing_id` as subscription_bk
-`billing_id` was chosen as subscription's business key. *Why:* it stays the same through plan changes and customer mapping. *Rejected:* `customer_hk` + `plan`, doesn't track history. A new `subscription_id`, would have to rewrite ingestion. *Costs:* one subscription per billing account. System replacement splits history.
+`billing_id` was chosen as subscription's business key. *Why:* it stays the same through plan changes and customer mapping. *Rejected:* `customer_bk` + `plan`, doesn't track history. A new `subscription_id`, would have to rewrite ingestion. *Costs:* one subscription per billing account. System replacement splits history.
 
 ## Subscription as a hub
 Subscription becomes it's own hub, `hub_subscription`, and a link table, `link_customer_subscription` joins them. *Why:* better tracking for a customer's subscription history, and scalable if more descriptive attributes are added to a customer's subscription later on. *Rejected:* subscription as a satellite row in `sat_customer`. *Costs:* Currently, `sat_subscription` only has one descriptive attribute.
@@ -142,3 +142,6 @@ Subscription becomes it's own hub, `hub_subscription`, and a link table, `link_c
 
 ## Hash for `link_customer_subscription`
 Business keys joined with `||` are used to create the hash key for the link between customers and subscriptions. *Why:* Recomputable from `customer_bk` and `subscription_bk`. *Costs:* Slight but negligable opportunity for collisions. *Rejected:* hash key made of `customer_hk` and `subscription_hk`; this is a hash of a hash and hard to recompute.
+
+## Same-as mapping source
+`sal_customer` maps a fallback key to the customer key when billing sends the `account_number`. *Why:* billing's account numbers are already trusted for other customers, and ingestion doesn't change. *Rejected:* a mapping file we maintain, and a new RAW source, which changes ingestion. *Costs:* a wrong mapping can be superseded by a newer row, but its history can't be undone. Billing only, and a mapping that returns to an earlier value isn't recorded.

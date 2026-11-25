@@ -14,8 +14,8 @@ delta-vault/
 │   └── notes/                Personal learning notes (gitignored)
 ├── data/                     Source files, one CRM and one billing CSV per batch
 │   ├── batch_1/              Starting state, including unmapped B-9001
-│   ├── batch_2/              Rename and plan change (not made yet)
-│   ├── batch_3/              B-9001 gets mapped (not made yet)
+│   ├── batch_2/              Rename and plan change
+│   ├── batch_3/              B-9001 gets mapped
 │   ├── bad_batch/            Deliberately fails the DQ gate
 │   └── dq_cases/             One CSV per DQ case, never loaded
 ├── ingestion/                Plain functions; the only class is the exception
@@ -30,7 +30,7 @@ delta-vault/
 └── dbt/
     ├── dbt_project.yml       Project name and per-folder defaults
     ├── profiles.yml.example  Connection template
-    ├── macros/               Schema name, hash key, and hashdiff macros
+    ├── macros/               Schema name macro
     ├── tests/                Reload and revenue reconciliation tests
     └── models/
         ├── staging/          Clean names and types, add hashes
