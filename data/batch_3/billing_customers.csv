@@ -1,0 +1,7 @@
+billing_id,account_number,customer_name,city,plan
+B-5001,1001,Acme Corporation,Dallas,PRO
+B-5002,1002,Birch Logistics,Austin,PRO
+B-5003,1003,Cobalt Dental,San Antonio,PRO
+B-5004, 1004,Delta Bakery,Denver,BASIC
+B-9001,1005,Elm St Yoga,Boston,BASIC
+B-5006,1006,Fern Books,Houston,BASIC
