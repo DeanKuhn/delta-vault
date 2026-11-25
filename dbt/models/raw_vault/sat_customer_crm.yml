@@ -1,0 +1,7 @@
+version: 2
+models:
+  - name: sat_customer_crm
+    columns:
+      - name: customer_hk
+        data_tests:
+          - not_null
