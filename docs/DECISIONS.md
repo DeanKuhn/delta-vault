@@ -20,7 +20,7 @@ Vault loads use hand-written SQL and a hash macro, not AutomateDV.
 Hashdiffs hash only a satellite's descriptive columns, not the business key. Every satellite load compares the incoming row with the latest row for the same hash key, so the business key adds nothing. A load that compares hashdiffs without the hash key would skip changes for any customer whose details match another customer's. 
 
 ## Hash input cleanup
-Hash key and hashdiff inputs are trimmed and uppercased, joined with `||`, and NULLs become `^^`. Using the same rule everywhere keeps hash keys matching across hubs, links, and satellites, and the placeholder lets a change to or from NULL be detected. Case-only corrections are not recorded as changes.
+Hash key and hashdiff inputs are trimmed and uppercased, joined with `||`, and NULLs and blanks become `^^`. Using the same rule everywhere keeps hash keys matching across hubs, links, and satellites, and the placeholder lets a change to or from NULL be detected. Case-only corrections are not recorded as changes.
 
 ## Platform
 Snowflake is widely used in modern data stacks. The trial ends around Dec 2nd, so the repo documents sample output for when it can no longer run there.
