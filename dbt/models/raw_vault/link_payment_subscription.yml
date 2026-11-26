@@ -1,0 +1,14 @@
+version: 2
+models:
+  - name: link_payment_subscription
+    columns:
+      - name: link_payment_subscription_hk
+        data_tests:
+          - not_null
+          - unique
+      - name: payment_subscription
+        data_tests:
+          - not_null
+      - name: subscription_hk
+        data_tests:
+          - not_null

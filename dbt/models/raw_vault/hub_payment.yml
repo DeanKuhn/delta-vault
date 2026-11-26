@@ -1,0 +1,8 @@
+version: 2
+models:
+  - name: hub_payment
+    columns:
+      - name: payment_hk
+        data_tests:
+          - not_null
+          - unique
