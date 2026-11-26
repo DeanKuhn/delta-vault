@@ -22,7 +22,8 @@ hash_text as (
     upper(payment_id) as payment_bk,
     upper(billing_id) as subscription_bk,
     concat(
-      coalesce(cast(amount as varchar), '^^'), '||', coalesce(cast(paid_date as varchar), '^^')
+      coalesce(to_varchar(amount), '^^'), '||', 
+      coalesce(to_varchar(paid_date, 'YYYY-MM-DD'), '^^')
     ) as hashdiff_text
 
   from raw
