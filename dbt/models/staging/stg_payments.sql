@@ -5,10 +5,11 @@ with raw as (
     _loaded_at as load_date,
     trim(payment_id) as payment_id,
     trim(billing_id) as billing_id,
-    trim(amount) as amount,
+    cast(trim(amount) as number(10, 2)) as amount,
+    cast(trim(paid_date) as date) as paid_date,
     'PAYMENT' as record_source
     
-  from {{ source('raw', 'payments' }}
+  from {{ source('raw', 'payments') }}
 
   where batch_id = {{ var('batch_id') }}
 
@@ -20,7 +21,9 @@ hash_text as (
     *,
     upper(payment_id) as payment_bk,
     upper(billing_id) as subscription_bk,
-    coalesce(nullif(upper(amount), ''), '^^') as hashdiff_text
+    concat(
+      coalesce(cast(amount as varchar), '^^'), '||', coalesce(cast(paid_date as varchar), '^^')
+    ) as hashdiff_text
 
   from raw
 

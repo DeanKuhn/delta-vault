@@ -6,3 +6,4 @@ sources:
     tables:
       - name: crm_customers
       - name: billing_customers
+      - name: payments

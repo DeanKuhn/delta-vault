@@ -1,6 +1,6 @@
 version: 2
 models:
-  - name: stg_payment
+  - name: stg_payments
     columns:
       - name: payment_hk
         data_tests:
