@@ -145,3 +145,9 @@ Business keys joined with `||` are used to create the hash key for the link betw
 
 ## Same-as mapping source
 `sal_customer` maps a fallback key to the customer key when billing sends the `account_number`. *Why:* billing's account numbers are already trusted for other customers, and ingestion doesn't change. *Rejected:* a mapping file we maintain, and a new RAW source, which changes ingestion. *Costs:* a wrong mapping can be superseded by a newer row, but its history can't be undone. Billing only, and a mapping that returns to an earlier value isn't recorded.
+
+## Payments as a hub
+Payments was chosen as a hub, link + satellite instead a a single non-historized table because...
+
+## Header-only payments file failes
+Header-only payment files fail on purpose. *Why:* easier to add into the ingestion pipeline's logic, matches CRM and billing. *Rejected:* allowing a month with zero payments (just the csv file header) to pass through. *Costs:* a month without any payments has no support.
