@@ -147,7 +147,7 @@ Business keys joined with `||` are used to create the hash key for the link betw
 `sal_customer` maps a fallback key to the customer key when billing sends the `account_number`. *Why:* billing's account numbers are already trusted for other customers, and ingestion doesn't change. *Rejected:* a mapping file we maintain, and a new RAW source, which changes ingestion. *Costs:* a wrong mapping can be superseded by a newer row, but its history can't be undone. Billing only, and a mapping that returns to an earlier value isn't recorded.
 
 ## Payments as a hub
-Payments was chosen as a hub, link + satellite instead a a single non-historized table because...
+Payments is modeled as a hub, link, and satellite instead of a single non-historized link. *Why:* hub, link, and satellite are patterns already built and tested here, which fits the timebox. The data has no refunds or corrections, but if they appear, a satellite records them as new rows and the payment hub gives them a key to link to. *Rejected:* a non-historized (transactional) link holding amount and paid date. *Costs:* payments never change in this data, so `sat_payment` is extra structure that will hold one row per payment.
 
-## Header-only payments file failes
-Header-only payment files fail on purpose. *Why:* easier to add into the ingestion pipeline's logic, matches CRM and billing. *Rejected:* allowing a month with zero payments (just the csv file header) to pass through. *Costs:* a month without any payments has no support.
+## Header-only payments file fails
+Header-only payment files fail on purpose. *Why:* a month with no payments shouldn't be faked with zero-amount placeholder rows; zeros belong in the mart through a left join and `coalesce`. It also reuses the existing empty-file check, matching CRM and billing. *Rejected:* letting a header-only file pass, and loading zero-amount placeholder rows. *Costs:* a real month with no payments blocks the whole batch, CRM and billing included, because all three files load in one transaction.
