@@ -1,0 +1,8 @@
+version: 2
+models:
+  - name: stg_payment
+    columns:
+      - name: payment_hk
+        data_tests:
+          - unique
+          - not_null
