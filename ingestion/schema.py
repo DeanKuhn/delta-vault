@@ -40,7 +40,16 @@ def schema():
             PLAN VARCHAR
         )
     """)
-
+    cur.execute("""
+        CREATE TABLE IF NOT EXISTS DELTA_VAULT.RAW.PAYMENTS (
+            BATCH_ID INTEGER NOT NULL,
+            _LOADED_AT TIMESTAMP_TZ NOT NULL,
+            PAYMENT_ID VARCHAR NOT NULL,
+            BILLING_ID VARCHAR NOT NULL,
+            AMOUNT VARCHAR NOT NULL,
+            PAID_DATE VARCHAR NOT NULL
+        )
+    """)
     conn.close()
 
 

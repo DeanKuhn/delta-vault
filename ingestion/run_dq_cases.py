@@ -6,7 +6,7 @@ Run every DQ case offline and compare each result with what we expect.
 import sys
 from pathlib import Path
 
-from ingestion.dq_checks import check_billing, check_crm
+from ingestion.dq_checks import check_billing, check_crm, check_payments
 from ingestion.load import get_id, read_all
 
 PASSES = "passes"
@@ -35,7 +35,22 @@ FILE_CASES = {
     "data/dq_cases/crm_short_row_id_only.csv": "DataQualityError: CRM: Too few fields, row 1.",
     "data/dq_cases/crm_trailing_commas.csv": PASSES,
     "data/dq_cases/crm_two_unmapped.csv": PASSES,
+    "data/batch_1/payments.csv": PASSES,
+    "data/batch_2/payments.csv": PASSES,
+    "data/batch_3/payments.csv": PASSES,
+    "data/dq_cases/payments_header_only.csv": "DataQualityError: PAYMENTS: Rows are empty.",
+    "data/dq_cases/payments_duplicate_id.csv": "Duplicate PAYMENT_ID: P-1001, row 2.",
+    "data/dq_cases/payments_empty_fields.csv": "PAYMENTS batch encountered 3 problems",
+    "data/dq_cases/payments_bad_amount.csv": "Amount value abc failed to parse",
+    "data/dq_cases/payments_nonpositive_amount.csv": "PAYMENTS batch encountered 2 problems",
+    "data/dq_cases/payments_bad_date.csv": "Date value 2026-02-30 failed to parse",
+    "data/dq_cases/payments_unknown_billing.csv": "Billing_id value B-0000 not found",
+    "data/dq_cases/payments_three_problems.csv": "PAYMENTS batch encountered 3 problems",
+    "data/dq_cases/payments_messy_passes.csv": PASSES,
 }
+
+# Payments cases outside a batch folder check billing IDs against this file.
+DEFAULT_BILLING = Path("data/batch_1/billing_customers.csv")
 
 # folder: batch ID, or text that the error must contain
 ID_CASES = {
@@ -50,6 +65,15 @@ def run_file(path: Path) -> str:
         headers, rows = read_all(path.parent, path.name)
         if path.name.startswith("crm"):
             check_crm(headers, rows)
+        elif path.name.startswith("payments"):
+            billing_path = path.parent / "billing_customers.csv"
+            if not billing_path.exists():
+                billing_path = DEFAULT_BILLING
+            billing_headers, billing_rows = read_all(
+                billing_path.parent, billing_path.name
+            )
+            _, reference_billing_ids = check_billing(billing_headers, billing_rows)
+            check_payments(headers, rows, reference_billing_ids)
         else:
             check_billing(headers, rows)
     except Exception as e:

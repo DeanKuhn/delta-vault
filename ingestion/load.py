@@ -7,7 +7,7 @@ from datetime import UTC, datetime
 from pathlib import Path
 
 from ingestion.connection import transaction
-from ingestion.dq_checks import check_billing, check_crm
+from ingestion.dq_checks import check_billing, check_crm, check_payments
 from ingestion.source import read_headers, read_pages
 from ingestion.timed import timed
 
@@ -98,7 +98,9 @@ def load() -> None:
     crm_headers, crm_batch = read_all(args.batch, "crm_customers.csv")
     crm_keys = check_crm(crm_headers, crm_batch)
     billing_headers, billing_batch = read_all(args.batch, "billing_customers.csv")
-    billing_keys = check_billing(billing_headers, billing_batch)
+    billing_keys, reference_billing_ids = check_billing(billing_headers, billing_batch)
+    payment_headers, payment_batch = read_all(args.batch, "payments.csv")
+    payment_keys = check_payments(payment_headers, payment_batch, reference_billing_ids)
 
     # === Run deletions and insertions in one transaction ===
     with transaction(        
@@ -108,10 +110,12 @@ def load() -> None:
         loaded_at = get_loaded_at(cur, batch_id)
         delete_rows(cur, "CRM_CUSTOMERS", batch_id)
         delete_rows(cur, "BILLING_CUSTOMERS", batch_id)
+        delete_rows(cur, "PAYMENTS", batch_id)
         insert_rows(cur, "CRM_CUSTOMERS", crm_batch, crm_keys, batch_id, loaded_at)
         insert_rows(
             cur, "BILLING_CUSTOMERS", billing_batch, billing_keys, batch_id, loaded_at
         )
+        insert_rows(cur, "PAYMENTS", payment_batch, payment_keys, batch_id, loaded_at)
 
 
 if __name__ == "__main__":
