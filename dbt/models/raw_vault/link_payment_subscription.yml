@@ -6,7 +6,7 @@ models:
         data_tests:
           - not_null
           - unique
-      - name: payment_subscription
+      - name: payment_hk
         data_tests:
           - not_null
       - name: subscription_hk

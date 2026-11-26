@@ -4,12 +4,13 @@ with incoming as (
 
   select
     payment_hk,
-    payment_hashdiff,
+    hashdiff,
     load_date,
     amount,
+    paid_date,
     record_source
 
-  from {{ ref('stg_payment') }}
+  from {{ ref('stg_payments') }}
 
 ),
 
@@ -40,7 +41,7 @@ final as (
   where latest.payment_hk is null
     or (
       incoming.load_date > latest.load_date
-      and incoming.payment_hashdiff <> latest.payment_hashdiff
+      and incoming.hashdiff <> latest.hashdiff
     )
   {% endif %}
 

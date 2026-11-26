@@ -8,7 +8,7 @@ with payments as (
     load_date,
     record_source
 
-  from {{ ref('stg_payment') }}
+  from {{ ref('stg_payments') }}
 
 ),
 
