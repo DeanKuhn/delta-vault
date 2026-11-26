@@ -1,7 +1,7 @@
 # Definition of Finished
-Target: Nov 4 to Nov 26 (extended from Nov 11, then Nov 14, then Nov 19).
+Target: Nov 4 to Nov 26.
 
-Stop rule: stop building on Thursday, Nov 26. **This date is final and will not be extended.** Whatever exists on Nov 26 is the finished project. The panel is expected around Dec 4; use the remaining week to rehearse.
+Stop rule: stop building on Thursday, Nov 26. **This date is final and will not be extended.** Whatever exists on Nov 26 is the finished project. The panel is Dec 3rd, use the remaining week to rehearse.
 
 ## Architecture
 - [x] Python ingestion is simple and uses a generator for paging, a context manager for connections, and a timing decorator.
